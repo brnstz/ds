@@ -1,0 +1,5 @@
+Impressions Sum: 2295559
+Average Age: 29
+Clickthrough Rate:  1.85%
+Oldest Person: 108,0,3,0,1
+
