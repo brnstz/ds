@@ -14,24 +14,25 @@ ANALYSIS_FIELDS=['danceability', 'mode', 'tempo', 'time_signature', 'loudness']
 def distance(a, b):
     dist = 0
     for i in range(len(a)):
-    	dist += (a[i] - b[i])**2
+        dist += (a[i] - b[i])**2
 
     return abs(dist)
         
 
-class MusicHandler(BaseHTTPRequestHandler):
+#class MusicHandler(BaseHTTPRequestHandler):
+class MusicHandler():
     def get_clusters():
         pass
 
     def get_track():
         pass
 
-	def get_trackinfo(trackid):
-		ti = { 'track_id': trackid }
-		myfile = os.path.join(MSD_ROOT, trackid[2], trackid[3], trackid[4], trackid + ".h5")
-		f = h5py.File(myfile, 'r')
-		
-	    for field in ANALYSIS_FIELDS:
+    def get_trackinfo(self, trackid):
+        ti = { 'track_id': trackid }
+        myfile = os.path.join(MSD_ROOT, trackid[2], trackid[3], trackid[4], trackid + ".h5")
+        f = h5py.File(myfile, 'r')
+        
+        for field in ANALYSIS_FIELDS:
             ti[field] = f['analysis/songs'][field][0]
 
         ti['artist_terms'] = f['metadata/artist_terms'].value
@@ -46,10 +47,10 @@ class MusicHandler(BaseHTTPRequestHandler):
         f.close()
 
         return ti
-		
+        
 
     # Create a new version of clusters.json
-    def post_clusters():
+    def post_clusters(self):
         # Load initial dataframe (df)
         df = pandas.io.parsers.read_csv(os.path.join(LOCAL_ROOT, "head1000tracks.csv"))
 
@@ -72,9 +73,9 @@ class MusicHandler(BaseHTTPRequestHandler):
         df["_label"] = kmeans.labels_
         df["_track_id"] = trackid
 
-        for index, row in df.iterrows:
+        for index, row in df.iterrows():
             words_only = row[0:5000]
-            distance_from_center = distance(kmeans.cluster_centers[row["_label"]], words_only)
+            distance_from_center = distance(kmeans.cluster_centers_[row["_label"]], words_only)
             ti = self.get_trackinfo(row["_track_id"])
             ti["distance"] = distance_from_center
             pprint.pprint(ti)
@@ -92,6 +93,7 @@ class MusicHandler(BaseHTTPRequestHandler):
             self.post_clusters()
 
 
-server = HTTPServer(('', 8080), MusicHandler)
+#server = HTTPServer(('', 8080), MusicHandler)
 #server.serve_forever()
-server.post_clusters()
+handler = MusicHandler()
+handler.post_clusters()

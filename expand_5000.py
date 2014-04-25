@@ -2,6 +2,10 @@
 
 #from pandas.io.parsers import read_csv
 
+# grep -v '^#' mxm_dataset_train.txt | grep -v '^%' | ./expand_5000.py > expanded_mxm_dataset_train.txt
+# grep -v '^#' mxm_dataset_test.txt | grep -v '^%' | ./expand_5000.py > expanded_mxm_dataset_test.txt
+# cat word.txt expanded_mxm_dataset_train.txt expanded_mxm_dataset_test.txt > tracks.csv
+
 import sys
 import string
 import pprint
