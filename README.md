@@ -1,4 +1,4 @@
 ds
 ==
 
-Code for Data Science class at General Assembly 2014
+Code for Data Science class final project at General Assembly 2014
