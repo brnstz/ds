@@ -3,11 +3,13 @@
 import pandas
 import os.path
 import h5py
+import pprint
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from sklearn.cluster import MiniBatchKMeans, KMeans
 
 LOCAL_ROOT="/mnt/msd/AdditionalFiles"
 MSD_ROOT="/mnt/msd/data"
+ANALYSIS_FIELDS=['danceability', 'mode', 'tempo', 'time_signature', 'loudness']
 
 def distance(a, b):
     dist = 0
@@ -15,7 +17,6 @@ def distance(a, b):
     	dist += (a[i] - b[i])**2
 
     return abs(dist)
-    
         
 
 class MusicHandler(BaseHTTPRequestHandler):
@@ -26,13 +27,25 @@ class MusicHandler(BaseHTTPRequestHandler):
         pass
 
 	def get_trackinfo(trackid):
-		ti = { "track_id": trackid }
+		ti = { 'track_id': trackid }
 		myfile = os.path.join(MSD_ROOT, trackid[2], trackid[3], trackid[4], trackid + ".h5")
 		f = h5py.File(myfile, 'r')
 		
-		ti['danceability'] = f['analysis/songs']['danceability'] 
-		ti['mode'] = f['analysis/songs']['danceability'] 
-		
+	    for field in ANALYSIS_FIELDS:
+            ti[field] = f['analysis/songs'][field][0]
+
+        ti['artist_terms'] = f['metadata/artist_terms'].value
+        ti['artist_terms_freq'] = f['metadata/artist_terms_freq'].value
+        ti['artist_terms_weight'] = f['metadata/artist_terms_weight'].value
+
+        # Are these the correct indexes?
+        ti['artist_name'] = f['metadata/songs'][0][9]
+        ti['album_name'] = f['metadata/songs'][0][14]
+        ti['song_name'] = f['metadata/songs'][0][18]
+
+        f.close()
+
+        return ti
 		
 
     # Create a new version of clusters.json
@@ -55,8 +68,16 @@ class MusicHandler(BaseHTTPRequestHandler):
         kmeans.fit(df)
 
         # Put labels in df
+        # 500
         df["_label"] = kmeans.labels_
         df["_track_id"] = trackid
+
+        for index, row in df.iterrows:
+            words_only = row[0:5000]
+            distance_from_center = distance(kmeans.cluster_centers[row["_label"]], words_only)
+            ti = self.get_trackinfo(row["_track_id"])
+            ti["distance"] = distance_from_center
+            pprint.pprint(ti)
 
 
     def do_GET(self):
@@ -72,4 +93,5 @@ class MusicHandler(BaseHTTPRequestHandler):
 
 
 server = HTTPServer(('', 8080), MusicHandler)
-server.serve_forever()
+#server.serve_forever()
+server.post_clusters()
