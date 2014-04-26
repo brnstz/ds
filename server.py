@@ -105,7 +105,7 @@ class MusicHandler():
             "clusters": [None] * len(kmeans.labels_)
             #"clusters": [self.init_cluster()] * len(kmeans.labels_),
         }
-        for i in range(len(row["_label"])):
+        for i in range(len(kmeans.labels_)):
             res["clusters"][i] = self.init_cluster(kmeans.labels_[i], kmeans.cluster_centers_[i])
 
         # Put labels in df
