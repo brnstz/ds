@@ -118,6 +118,7 @@ class MusicHandler():
             words_only = row[0:5000]
 
             ti = self.get_trackinfo(row["_track_id"])
+            print "adding track: ", ti["artist_name"], ti["song_name"]
 
             distance_from_center = distance(
                 kmeans.cluster_centers_[row["_label"]], words_only
