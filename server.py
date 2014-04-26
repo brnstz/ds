@@ -7,6 +7,7 @@ import h5py
 import pprint
 import decimal
 import numpy
+import operator
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from sklearn.cluster import MiniBatchKMeans, KMeans
 
