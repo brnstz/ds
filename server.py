@@ -102,10 +102,10 @@ class MusicHandler():
         #    
         res = {
             "words": df.columns,
-            "clusters": [None] * len(kmeans.labels_)
+            "clusters": [None] * kmeans.n_clusters
             #"clusters": [self.init_cluster()] * len(kmeans.labels_),
         }
-        for i in range(len(kmeans.labels_)):
+        for i in range(kmeans.n_clusters):
             res["clusters"][i] = self.init_cluster(kmeans.labels_[i], kmeans.cluster_centers_[i])
 
         # Put labels in df
@@ -151,7 +151,7 @@ class MusicHandler():
             else:
                 c["mode_scores"]["major"] += 1
 
-            ti["tempos"] += ti["tempo"]
+            c["tempos"] += ti["tempo"]
 
         pprint.pprint(res)
 
