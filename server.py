@@ -56,16 +56,16 @@ def distance(a, b):
     return abs(dist)
 
 def get_trackinfo(trackid):
-    start = time()
+    #start = time()
     ti = { 'track_id': trackid }
     myfile = os.path.join(MSD_ROOT, trackid[2], trackid[3], trackid[4], trackid + ".h5")
     f = h5py.File(myfile, 'r')
-    opent = time()
-    print "open: ", opent - start
+    #opent = time()
+    #print "open: ", opent - start
    
     (ti['mode'], ti['tempo'], ti['time_signature'], ti['loudness']) = f['analysis/songs'][0, 'mode', 'tempo', 'time_signature', 'loudness']
-    analysist = time()
-    print "analysis: ", analysist - opent
+    #analysist = time()
+    #print "analysis: ", analysist - opent
 
     # Round tempo to nearest tenths
     ti['tempo'] = int(decimal.Decimal(int(round(ti['tempo'], -1))))
@@ -73,8 +73,8 @@ def get_trackinfo(trackid):
     ti['artist_terms'] = f['metadata/artist_terms'][0:]
     ti['artist_terms_freq'] = f['metadata/artist_terms_freq'][0:]
     ti['artist_terms_weight'] = f['metadata/artist_terms_weight'][0:]
-    metadata1 = time()
-    print "metadata1: ", metadata1 - analysist
+    #metadata1 = time()
+    #print "metadata1: ", metadata1 - analysist
 
     #md = f['metadata/songs'][0]
     #i = 0
@@ -91,21 +91,21 @@ def get_trackinfo(trackid):
     #    i += 1
     # FIXME: is this slow even without extracting?    
     md = f['metadata/songs'][0]
-    ti['artist_name'] = "Artist"
-    ti['album_name'] = "Album"
-    ti['song_name'] = "Song"
+    #ti['artist_name'] = "Artist"
+    #ti['album_name'] = "Album"
+    #ti['song_name'] = "Song"
 
-    #ti['artist_name'] = md[9]
-    #ti['album_name'] = md[14]
-    #ti['song_name'] = md[18]
-    metadata = time()
-    print "metadata: ", metadata - metadata1
+    ti['artist_name'] = md[9]
+    ti['album_name'] = md[14]
+    ti['song_name'] = md[18]
+    #metadata = time()
+    #print "metadata: ", metadata - metadata1
 
     f.close()
 
-    stop = time()
+    #stop = time()
 
-    print 'final: ', stop - start
+    #print 'final: ', stop - start
 
     return ti
 
@@ -191,7 +191,7 @@ class MusicHandler():
     def post_clusters(self):
         # Load initial dataframe (df)
         df = pandas.io.parsers.read_csv(
-            os.path.join(LOCAL_ROOT, "head1000tracks.csv")
+            os.path.join(LOCAL_ROOT, "tracks.csv")
         )
 
         # Save track id for later use
@@ -229,7 +229,7 @@ class MusicHandler():
 
         track_count = 0
         for index, row in df.iterrows():
-            print track_count
+            print "track count:", track_count
             track_count += 1
             # Put on correct cluster queue to be processed
             q = qs[row["_label"]]
