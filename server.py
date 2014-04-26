@@ -29,9 +29,22 @@ def load_reverse():
         x = line.split("<SEP>")
         revmap[x[0]] = x[1]
 
+    fh.close()
     return revmap
 
 UNSTEMMED=load_reverse()
+
+def load_stopwords():
+    stopwords = {}
+    fh = open(os.path.join(LOCAL_ROOT, "stopwords.txt"))
+    words_arr = fh.read().split(",")
+    fh.close()
+    for word in words_arr:
+        stopwords[word] = True
+
+    return stopwords
+
+STOPWORDS=load_stopwords()
 
 def distance(a, b):
     dist = 0
@@ -95,12 +108,14 @@ class ClusterWorker():
 
             # Accumulate count for each word used
             for i in range(5000):
-                word = UNSTEMMED[self.words[i]]
-                if words_only[i] > 0.0:
-                    # Ensure count is initialized
-                    c["word_scores"].setdefault(word, 0)
-                    # Add to count our track's value for this word
-                    c["word_scores"][word] += words_only[i]
+                stemmed_word = self.words[i]
+                word = UNSTEMMED[stemmed_word]
+                if not STOPWORDS[stemmed_word] and not STOPWORDS[word]:
+                    if words_only[i] > 0.0:
+                        # Ensure count is initialized
+                        c["word_scores"].setdefault(word, 0)
+                        # Add to count our track's value for this word
+                        c["word_scores"][word] += words_only[i]
 
             # Accumulate count for each descriptive term
             for i in range(len(ti["artist_terms"])):
