@@ -59,12 +59,18 @@ def get_trackinfo(trackid):
     ti = { 'track_id': trackid }
     myfile = os.path.join(MSD_ROOT, trackid[2], trackid[3], trackid[4], trackid + ".h5")
     f = h5py.File(myfile, 'r')
+    opent = time()
+    print "open: ", opent - start
     
     for field in ANALYSIS_FIELDS:
         ti[field] = f['analysis/songs'][field][0]
+    analysis = time()
+    print "analysis: ", analysis - opent
 
     # Round tempo to nearest tenths
     ti['tempo'] = int(decimal.Decimal(int(round(ti['tempo'], -1))))
+    tempo = time()
+    print "tempo: ", tempo - analysis
 
     ti['artist_terms'] = f['metadata/artist_terms'].value
     ti['artist_terms_freq'] = f['metadata/artist_terms_freq'].value
@@ -73,12 +79,14 @@ def get_trackinfo(trackid):
     ti['artist_name'] = f['metadata/songs'][0][9]
     ti['album_name'] = f['metadata/songs'][0][14]
     ti['song_name'] = f['metadata/songs'][0][18]
+    metadata = time()
+    print "metadata: ", metadata - tempo
 
     f.close()
 
     stop = time()
 
-    print start - stop
+    print 'final: ', stop - start
 
     return ti
 
