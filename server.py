@@ -174,8 +174,8 @@ class MusicHandler():
         # Clean up for output
         for i in range(kmeans.n_clusters):
             c = clusters[i]
-            c["top_words"] =  sorted(c["word_scores"].iteritems(), key=operator.itemgetter(1))[:TOP_COUNT]
-            c["top_terms"] =  sorted(c["terms_scores"].iteritems(), key=operator.itemgetter(1))[:TOP_COUNT]
+            c["top_words"] =  sorted(c["word_scores"].iteritems(), key=operator.itemgetter(1), reverse=True)[:TOP_COUNT]
+            c["top_terms"] =  sorted(c["term_scores"].iteritems(), key=operator.itemgetter(1), reverse=True)[:TOP_COUNT]
             c.pop("word_scores", None)
             c.pop("term_scores", None)
 
