@@ -66,10 +66,11 @@ def get_trackinfo(trackid):
 
 
 class ClusterWorker():
-    def __init__(self, c, q, words):
+    def __init__(self, c, q, words, center):
         self.c = c
         self.q = q
         self.words = words
+        self.center = center
 
     def runit(self):
         q = self.q
@@ -81,9 +82,7 @@ class ClusterWorker():
             ti = get_trackinfo(row["_track_id"])
             print "adding track: %s: '%s'" % (ti["artist_name"], ti["song_name"])
 
-            distance_from_center = distance(
-                kmeans.cluster_centers_[row["_label"]], words_only
-            )
+            distance_from_center = distance(self.center, words_only)
 
             # Create a "quick" version of track without all info
             quick_track = { 
@@ -169,7 +168,7 @@ class MusicHandler():
         workers = [None] * kmeans.n_clusters
         for i in range(kmeans.n_clusters):
             clusters[i] = self.init_cluster(kmeans.labels_[i], kmeans.cluster_centers_[i])
-            workers[i] = ClusterWorker(clusters[i], qs[i], df.columns) 
+            workers[i] = ClusterWorker(clusters[i], qs[i], df.columns, kmeans.cluster_centers_[i])
 
             t = threading.Thread(target=workers[i].runit)
             t.daemon = True
