@@ -10,6 +10,7 @@ import numpy
 import operator
 import Queue
 import threading
+from time import time
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from sklearn.cluster import MiniBatchKMeans, KMeans
 
@@ -45,8 +46,6 @@ def load_stopwords():
     return stopwords
 
 STOPWORDS=load_stopwords()
-pprint.pprint(STOPWORDS)
-
 
 def distance(a, b):
     dist = 0
@@ -56,6 +55,7 @@ def distance(a, b):
     return abs(dist)
 
 def get_trackinfo(trackid):
+    start = time()
     ti = { 'track_id': trackid }
     myfile = os.path.join(MSD_ROOT, trackid[2], trackid[3], trackid[4], trackid + ".h5")
     f = h5py.File(myfile, 'r')
@@ -75,6 +75,10 @@ def get_trackinfo(trackid):
     ti['song_name'] = f['metadata/songs'][0][18]
 
     f.close()
+
+    stop = time()
+
+    print start - stop
 
     return ti
 
