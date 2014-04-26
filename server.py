@@ -40,11 +40,13 @@ def load_stopwords():
     words_arr = fh.read().split(",")
     fh.close()
     for word in words_arr:
-        stopwords[word] = True
+        stopwords[word.strip()] = True
 
     return stopwords
 
 STOPWORDS=load_stopwords()
+pprint.ppprint(STOPWORDS)
+
 
 def distance(a, b):
     dist = 0
