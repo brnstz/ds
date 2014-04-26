@@ -6,6 +6,7 @@ import os.path
 import h5py
 import pprint
 import decimal
+import numpy
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from sklearn.cluster import MiniBatchKMeans, KMeans
 
@@ -13,8 +14,8 @@ LOCAL_ROOT="/mnt/msd/AdditionalFiles"
 MSD_ROOT="/mnt/msd/data"
 ANALYSIS_FIELDS=['danceability', 'mode', 'tempo', 'time_signature', 'loudness']
 MODE_MAP=["minor", "major"]
-SKIP_COMMON_WORD_COUNT=10
-TOP_TERM_COUNT=20
+#SKIP_COMMON_WORD_COUNT=10
+TOP_COUNT=20
 
 # Load reverse stem mapping
 def load_reverse():
@@ -113,14 +114,11 @@ class MusicHandler():
         #   "median_tempo": 120,
         #   "median"
         # }
-        #    
-        res = {
-            "words": df.columns,
-            "clusters": [None] * kmeans.n_clusters
-            #"clusters": [self.init_cluster()] * len(kmeans.labels_),
-        }
+        # 
+
+        clusters = [None] * kmeans.n_clusters
         for i in range(kmeans.n_clusters):
-            res["clusters"][i] = self.init_cluster(kmeans.labels_[i], kmeans.cluster_centers_[i])
+            clusters[i] = self.init_cluster(kmeans.labels_[i], kmeans.cluster_centers_[i])
 
         # Put labels in df
         # 500
@@ -129,7 +127,7 @@ class MusicHandler():
 
         track_count = 0
         for index, row in df.iterrows():
-            c = res["clusters"][row["_label"]]
+            c = clusters[row["_label"]]
             words_only = row[0:5000]
 
             ti = self.get_trackinfo(row["_track_id"])
@@ -172,7 +170,18 @@ class MusicHandler():
 
             c["tempos"].append(ti["tempo"])
 
-        pprint.pprint(res)
+        # Clean up for output
+        for i in range(kmeans.n_clusters):
+            c = clusters[i]
+            c["top_words"] =  sorted(c["word_scores"].iteritems(), key=operator.itemgetter(1))[:TOP_COUNT]
+            c["top_terms"] =  sorted(c["terms_scores"].iteritems(), key=operator.itemgetter(1))[:TOP_COUNT]
+            c.pop("word_scores", None)
+            c.pop("term_scores", None)
+
+            c["median_tempo"] = numpy.median(c["tempos"])
+            c.pop("tempos")
+        
+        pprint.pprint(clusters)
 
 
 
