@@ -151,7 +151,7 @@ class MusicHandler():
             else:
                 c["mode_scores"]["major"] += 1
 
-            c["tempos"] += ti["tempo"]
+            c["tempos"].append(ti["tempo"])
 
         pprint.pprint(res)
 
