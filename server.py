@@ -62,9 +62,7 @@ def get_trackinfo(trackid):
     opent = time()
     print "open: ", opent - start
    
-    analysis = f['analysis/songs']
-    for field in ANALYSIS_FIELDS:
-        ti[field] = analysis[field][0]
+    (ti['mode'], ti['tempo'], ti['time_signature'], ti['loudness']) = f['analysis/songs'][0, 'mode', 'tempo', 'time_signature', 'loudness']
     analysist = time()
     print "analysis: ", analysist - opent
 
