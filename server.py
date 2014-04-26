@@ -112,7 +112,7 @@ class ClusterWorker():
             for i in range(5000):
                 stemmed_word = self.words[i]
                 word = UNSTEMMED[stemmed_word]
-                if not STOPWORDS[stemmed_word] and not STOPWORDS[word]:
+                if not STOPWORDS.get(stemmed_word, False) and not STOPWORDS.get(word, False):
                     if words_only[i] > 0.0:
                         # Ensure count is initialized
                         c["word_scores"].setdefault(word, 0)
