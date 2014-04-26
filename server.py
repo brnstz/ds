@@ -168,7 +168,7 @@ class MusicHandler():
             clusters[i] = self.init_cluster(kmeans.labels_[i], kmeans.cluster_centers_[i])
             workers[i] = ClusterWorker(clusters[i], qs[i]) 
 
-            t = Thread(target=workers[i].runit)
+            t = threading.Thread(target=workers[i].runit)
             t.daemon = True
             t.start()
 
