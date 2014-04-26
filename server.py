@@ -40,10 +40,36 @@ def distance(a, b):
 
     return abs(dist)
 
+def get_trackinfo(trackid):
+    ti = { 'track_id': trackid }
+    myfile = os.path.join(MSD_ROOT, trackid[2], trackid[3], trackid[4], trackid + ".h5")
+    f = h5py.File(myfile, 'r')
+    
+    for field in ANALYSIS_FIELDS:
+        ti[field] = f['analysis/songs'][field][0]
+
+    # Round tempo to nearest tenths
+    ti['tempo'] = int(decimal.Decimal(int(round(ti['tempo'], -1))))
+
+    ti['artist_terms'] = f['metadata/artist_terms'].value
+    ti['artist_terms_freq'] = f['metadata/artist_terms_freq'].value
+    ti['artist_terms_weight'] = f['metadata/artist_terms_weight'].value
+
+    ti['artist_name'] = f['metadata/songs'][0][9]
+    ti['album_name'] = f['metadata/songs'][0][14]
+    ti['song_name'] = f['metadata/songs'][0][18]
+
+    f.close()
+
+        return ti
+
+
+
 class ClusterWorker():
-    def __init__(self, c, q):
+    def __init__(self, c, q, words):
         self.c = c
         self.q = q
+        self.words = words
 
     def runit(self):
         q = self.q
@@ -52,7 +78,7 @@ class ClusterWorker():
             row = q.get()
             words_only = row[0:5000]
 
-            ti = self.get_trackinfo(row["_track_id"])
+            ti = get_trackinfo(row["_track_id"])
             print "adding track: %s: '%s'" % (ti["artist_name"], ti["song_name"])
 
             distance_from_center = distance(
@@ -70,7 +96,7 @@ class ClusterWorker():
 
             # Accumulate count for each word used
             for i in range(5000):
-                word = UNSTEMMED[df.columns[i]]
+                word = UNSTEMMED[self.words[i]]
                 if words_only[i] > 0.0:
                     # Ensure count is initialized
                     c["word_scores"].setdefault(word, 0)
@@ -100,29 +126,6 @@ class MusicHandler():
 
     def get_track():
         pass
-
-    def get_trackinfo(self, trackid):
-        ti = { 'track_id': trackid }
-        myfile = os.path.join(MSD_ROOT, trackid[2], trackid[3], trackid[4], trackid + ".h5")
-        f = h5py.File(myfile, 'r')
-        
-        for field in ANALYSIS_FIELDS:
-            ti[field] = f['analysis/songs'][field][0]
-
-        # Round tempo to nearest tenths
-        ti['tempo'] = int(decimal.Decimal(int(round(ti['tempo'], -1))))
-
-        ti['artist_terms'] = f['metadata/artist_terms'].value
-        ti['artist_terms_freq'] = f['metadata/artist_terms_freq'].value
-        ti['artist_terms_weight'] = f['metadata/artist_terms_weight'].value
-
-        ti['artist_name'] = f['metadata/songs'][0][9]
-        ti['album_name'] = f['metadata/songs'][0][14]
-        ti['song_name'] = f['metadata/songs'][0][18]
-
-        f.close()
-
-        return ti
 
     def init_cluster(self, label, center):
         res = {
@@ -166,7 +169,7 @@ class MusicHandler():
         workers = [None] * kmeans.n_clusters
         for i in range(kmeans.n_clusters):
             clusters[i] = self.init_cluster(kmeans.labels_[i], kmeans.cluster_centers_[i])
-            workers[i] = ClusterWorker(clusters[i], qs[i]) 
+            workers[i] = ClusterWorker(clusters[i], qs[i], df.columns) 
 
             t = threading.Thread(target=workers[i].runit)
             t.daemon = True
@@ -186,7 +189,7 @@ class MusicHandler():
             q.put(row)
 
         # Wait for all queues to complete
-        for i in range(kmeans.labels_):
+        for i in range(len(kmeans.labels_)):
             qs[i].join()
 
         # Clean up for output
