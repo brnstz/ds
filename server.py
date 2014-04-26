@@ -71,9 +71,9 @@ def get_trackinfo(trackid):
     tempo = time()
     print "tempo: ", tempo - analysist
 
-    ti['artist_terms'] = f['metadata/artist_terms'].value
-    ti['artist_terms_freq'] = f['metadata/artist_terms_freq'].value
-    ti['artist_terms_weight'] = f['metadata/artist_terms_weight'].value
+    ti['artist_terms'] = f['metadata/artist_terms'][0]
+    ti['artist_terms_freq'] = f['metadata/artist_terms_freq'][0]
+    ti['artist_terms_weight'] = f['metadata/artist_terms_weight'][0]
 
     md = f['metadata/songs'][0]
     ti['artist_name'] = md[9]
