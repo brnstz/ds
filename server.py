@@ -45,7 +45,7 @@ def load_stopwords():
     return stopwords
 
 STOPWORDS=load_stopwords()
-pprint.ppprint(STOPWORDS)
+pprint.pprint(STOPWORDS)
 
 
 def distance(a, b):
