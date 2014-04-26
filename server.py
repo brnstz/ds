@@ -188,7 +188,7 @@ class MusicHandler():
             q.put(row)
 
         # Wait for all queues to complete
-        for i in range(kmeans.n_clusters_):
+        for i in range(kmeans.n_clusters):
             qs[i].join()
 
         # Clean up for output
