@@ -144,7 +144,7 @@ class MusicHandler():
             for i in range(len(ti["artist_terms"])):
                 term = ti["artist_terms"][i]
                 c["term_scores"].setdefault(term, 0)
-                c["term_scores"][term] += ti["artist_terms_weight"]
+                c["term_scores"][term] += ti["artist_terms_weight"][i]
 
             if ti["mode"] == 0:
                 c["mode_scores"]["minor"] += 1
