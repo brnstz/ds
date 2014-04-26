@@ -70,11 +70,9 @@ def get_trackinfo(trackid):
     # Round tempo to nearest tenths
     ti['tempo'] = int(decimal.Decimal(int(round(ti['tempo'], -1))))
 
-    ti['artist_terms'] = f['metadata/artist_terms'][0]
-    ti['artist_terms_freq'] = f['metadata/artist_terms_freq'][0]
-    ti['artist_terms_weight'] = f['metadata/artist_terms_weight'][0]
-    pprint.pprint(ti)
-    sys.exit()
+    ti['artist_terms'] = f['metadata/artist_terms'][0:]
+    ti['artist_terms_freq'] = f['metadata/artist_terms_freq'][0:]
+    ti['artist_terms_weight'] = f['metadata/artist_terms_weight'][0:]
 
     md = f['metadata/songs'][0]
     ti['artist_name'] = md[9]
