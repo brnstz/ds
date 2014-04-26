@@ -76,10 +76,23 @@ def get_trackinfo(trackid):
     metadata1 = time()
     print "metadata1: ", metadata1 - analysist
 
-    md = f['metadata/songs'][0]
-    ti['artist_name'] = md[9]
-    ti['album_name'] = md[14]
-    ti['song_name'] = md[18]
+    #md = f['metadata/songs'][0]
+    i = 0
+    for val in f['metadata/songs'][0]:
+        if i == 9:
+            ti['artist_name'] = val
+        elif i == 14:
+            ti['album_name'] = val
+        elif i == 18:
+            ti['song_name'] = val
+        elif i > 18:
+            break
+        
+        i += 1
+        
+    #ti['artist_name'] = md[9]
+    #ti['album_name'] = md[14]
+    #ti['song_name'] = md[18]
     metadata = time()
     print "metadata: ", metadata - metadata1
 
