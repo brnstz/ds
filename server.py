@@ -13,6 +13,7 @@ import threading
 from time import time
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from sklearn.cluster import MiniBatchKMeans, KMeans
+import sys
 
 LOCAL_ROOT="/mnt/msd/AdditionalFiles"
 MSD_ROOT="/mnt/msd/data"
@@ -68,19 +69,19 @@ def get_trackinfo(trackid):
 
     # Round tempo to nearest tenths
     ti['tempo'] = int(decimal.Decimal(int(round(ti['tempo'], -1))))
-    tempo = time()
-    print "tempo: ", tempo - analysist
 
     ti['artist_terms'] = f['metadata/artist_terms'][0]
     ti['artist_terms_freq'] = f['metadata/artist_terms_freq'][0]
     ti['artist_terms_weight'] = f['metadata/artist_terms_weight'][0]
+    pprint.pprint(ti)
+    sys.exit()
 
     md = f['metadata/songs'][0]
     ti['artist_name'] = md[9]
     ti['album_name'] = md[14]
     ti['song_name'] = md[18]
     metadata = time()
-    print "metadata: ", metadata - tempo
+    print "metadata: ", metadata - analysist
 
     f.close()
 
