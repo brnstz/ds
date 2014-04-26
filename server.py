@@ -53,28 +53,26 @@ class MusicHandler():
         f.close()
 
         return ti
+
+    def init_cluster(self, label, center):
+        res = {
+            "center": center,
+            "label": label,
+            "tracks": [],
+            "word_scores": {},
+            "term_scores": {},
+            "mode_scores": {"major": 0, "minor": 0},
+            "tempos": []
+        }
         
+        return res
 
     # Create a new version of clusters.json
     def post_clusters(self):
-        # Res is a list of clusters.
-        # Cluster should look like
-        # {
-        #   "center": [1, 2, 3, 4],
-        #   "key_words": [top 20 words that aren't in the most common],
-        #   "tracks": ["trackids"...]
-        #   "sorted_terms": [top 20 terms by weight],
-        #   "mode_count": {"major": 32324, "minor": 234},
-        #   "median_tempo": 120,
-        #   "median"
-        # }
-        #    
-        res = {
-            "words": None,
-            "clusters": 
-
         # Load initial dataframe (df)
-        df = pandas.io.parsers.read_csv(os.path.join(LOCAL_ROOT, "head1000tracks.csv"))
+        df = pandas.io.parsers.read_csv(
+            os.path.join(LOCAL_ROOT, "head1000tracks.csv")
+        )
 
         # Save track id for later use
         trackid = df['track_id']
@@ -90,17 +88,70 @@ class MusicHandler():
         kmeans = MiniBatchKMeans(n_clusters=10)
         kmeans.fit(df)
 
+        # Res is a list of clusters.
+        # Each cluster entry should look something like... work in progress
+        # {
+        #   "center": [1, 2, 3, 4],
+        #   "tracks": ["trackids"...]
+        #   "word_scores": [top 20 words that aren't in the most common],
+        #   "sorted_terms": [top 20 terms by weight],
+        #   "mode_count": {"major": 32324, "minor": 234},
+        #   "median_tempo": 120,
+        #   "median"
+        # }
+        #    
+        res = {
+            "words": df.columns,
+            "clusters": [self.init_cluster()] * len(kmeans.labels_),
+        }
+
         # Put labels in df
         # 500
         df["_label"] = kmeans.labels_
         df["_track_id"] = trackid
 
         for index, row in df.iterrows():
+            c = res["clusters"][row["_label"]]
             words_only = row[0:5000]
-            distance_from_center = distance(kmeans.cluster_centers_[row["_label"]], words_only)
+
             ti = self.get_trackinfo(row["_track_id"])
-            ti["distance"] = distance_from_center
-            pprint.pprint(ti)
+
+            distance_from_center = distance(
+                kmeans.cluster_centers_[row["_label"]], words_only
+            )
+
+            # Create a "quick" version of track without all info
+            quick_track = { 
+                "track_id": row["_track_id"],
+                "distance":  distance_from_center,
+            }
+          
+            # Append track to our list
+            c["tracks"].append(quick_track)
+
+            # Accumulate count for each word used
+            for i in range(5000):
+                word = df.columns[i]
+                # Ensure count is initialized
+                c["word_scores"].setdefault(word, 0)
+                # Add to count our track's value for this word
+                c["word_scores"][word] += words_only[i]
+
+            # Accumulate count for each descriptive term
+            for i in range(len(ti["artist_terms"])):
+                term = ti["artist_terms"][i]
+                c["term_scores"].setdefault(term, 0)
+                c["term_scores"][term] += ti["artist_terms_weight"]
+
+            if ti["mode"] == 0:
+                c["mode_scores"]["minor"] += 1
+            else:
+                c["mode_scores"]["major"] += 1
+
+            ti["tempos"] += ti["tempo"]
+
+        pprint.pprint(res)
+
 
 
     def do_GET(self):
