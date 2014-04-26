@@ -113,12 +113,15 @@ class MusicHandler():
         df["_label"] = kmeans.labels_
         df["_track_id"] = trackid
 
+        i = 0
         for index, row in df.iterrows():
             c = res["clusters"][row["_label"]]
             words_only = row[0:5000]
 
             ti = self.get_trackinfo(row["_track_id"])
-            print "adding track: ", ti["artist_name"], ti["song_name"]
+            #print "adding track: ", ti["artist_name"], ti["song_name"]
+            print "adding track: %d %s: '%s'" % (i, ti["artist_name"], ti["song_name"])
+            i += 1
 
             distance_from_center = distance(
                 kmeans.cluster_centers_[row["_label"]], words_only
