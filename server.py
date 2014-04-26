@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import pandas
 import os.path
@@ -14,6 +15,19 @@ ANALYSIS_FIELDS=['danceability', 'mode', 'tempo', 'time_signature', 'loudness']
 MODE_MAP=["minor", "major"]
 SKIP_COMMON_WORD_COUNT=10
 TOP_TERM_COUNT=20
+
+# Load reverse stem mapping
+def load_reverse():
+    revmap = {}
+    fh = open(os.path.join(LOCAL_ROOT, "mxm_reverse_mapping.txt"))
+    for line in fh:
+        line = line.strip()
+        x = line.split("<SEP>")
+        revmap[x[0]] = x[1]
+
+    return revmap
+
+UNSTEMMED=load_reverse()
 
 def distance(a, b):
     dist = 0
@@ -138,11 +152,12 @@ class MusicHandler():
 
             # Accumulate count for each word used
             for i in range(5000):
-                word = df.columns[i]
-                # Ensure count is initialized
-                c["word_scores"].setdefault(word, 0)
-                # Add to count our track's value for this word
-                c["word_scores"][word] += words_only[i]
+                word = UNSTEMMED[df.columns[i]]
+                if words_only[i] > 0.0:
+                    # Ensure count is initialized
+                    c["word_scores"].setdefault(word, 0)
+                    # Add to count our track's value for this word
+                    c["word_scores"][word] += words_only[i]
 
             # Accumulate count for each descriptive term
             for i in range(len(ti["artist_terms"])):
