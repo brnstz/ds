@@ -8,8 +8,6 @@ import pprint
 import decimal
 import numpy
 import operator
-import Queue
-import threading
 from time import time
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from sklearn.cluster import MiniBatchKMeans, KMeans
@@ -113,57 +111,51 @@ def get_trackinfo(trackid):
 
 
 class ClusterWorker():
-    def __init__(self, c, q, words, center):
+    def __init__(self, c, words, center):
         self.c = c
-        self.q = q
         self.words = words
         self.center = center
 
-    def runit(self):
-        q = self.q
-        c = self.c
-        while True:
-            row = q.get()
-            words_only = row[0:5000]
+    def process(self, row):
+        words_only = row[0:5000]
 
-            ti = get_trackinfo(row["_track_id"])
-            print "adding track: %s: '%s'" % (ti["artist_name"], ti["song_name"])
+        ti = get_trackinfo(row["_track_id"])
+        print "adding track: %s: '%s'" % (ti["artist_name"], ti["song_name"])
 
-            distance_from_center = distance(self.center, words_only)
+        distance_from_center = distance(self.center, words_only)
 
-            # Create a "quick" version of track without all info
-            quick_track = { 
-                "track_id": row["_track_id"],
-                "distance":  distance_from_center,
-            }
-          
-            # Append track to our list
-            c["tracks"].append(quick_track)
+        # Create a "quick" version of track without all info
+        quick_track = { 
+            "track_id": row["_track_id"],
+            "distance":  distance_from_center,
+        }
+      
+        # Append track to our list
+        self.c["tracks"].append(quick_track)
 
-            # Accumulate count for each word used
-            for i in range(5000):
-                stemmed_word = self.words[i]
-                word = UNSTEMMED[stemmed_word]
-                if not STOPWORDS.get(stemmed_word, False) and not STOPWORDS.get(word, False):
-                    if words_only[i] > 0.0:
-                        # Ensure count is initialized
-                        c["word_scores"].setdefault(word, 0)
-                        # Add to count our track's value for this word
-                        c["word_scores"][word] += words_only[i]
+        # Accumulate count for each word used
+        for i in range(5000):
+            stemmed_word = self.words[i]
+            word = UNSTEMMED[stemmed_word]
+            if not STOPWORDS.get(stemmed_word, False) and not STOPWORDS.get(word, False):
+                if words_only[i] > 0.0:
+                    # Ensure count is initialized
+                    self.c["word_scores"].setdefault(word, 0)
+                    # Add to count our track's value for this word
+                    self.c["word_scores"][word] += words_only[i]
 
-            # Accumulate count for each descriptive term
-            for i in range(len(ti["artist_terms"])):
-                term = ti["artist_terms"][i]
-                c["term_scores"].setdefault(term, 0)
-                c["term_scores"][term] += ti["artist_terms_weight"][i]
+        # Accumulate count for each descriptive term
+        for i in range(len(ti["artist_terms"])):
+            term = ti["artist_terms"][i]
+            self.c["term_scores"].setdefault(term, 0)
+            self.c["term_scores"][term] += ti["artist_terms_weight"][i]
 
-            if ti["mode"] == 0:
-                c["mode_scores"]["minor"] += 1
-            else:
-                c["mode_scores"]["major"] += 1
+        if ti["mode"] == 0:
+            self.c["mode_scores"]["minor"] += 1
+        else:
+            self.c["mode_scores"]["major"] += 1
 
-            c["tempos"].append(ti["tempo"])
-            q.task_done()
+        self.c["tempos"].append(ti["tempo"])
 
         
 
@@ -211,17 +203,10 @@ class MusicHandler():
 
         clusters = [None] * kmeans.n_clusters
 
-        # One queue for each cluster
-        qs = [Queue.Queue()] * kmeans.n_clusters
-
         workers = [None] * kmeans.n_clusters
         for i in range(kmeans.n_clusters):
             clusters[i] = self.init_cluster(kmeans.labels_[i], kmeans.cluster_centers_[i])
             workers[i] = ClusterWorker(clusters[i], qs[i], df.columns, kmeans.cluster_centers_[i])
-
-            t = threading.Thread(target=workers[i].runit)
-            t.daemon = True
-            t.start()
 
 
         # Put labels in df
@@ -231,14 +216,9 @@ class MusicHandler():
         track_count = 0
         for index, row in df.iterrows():
             print "track count:", track_count
-            track_count += 1
-            # Put on correct cluster queue to be processed
-            q = qs[row["_label"]]
-            q.put(row)
+            w = workers[row["_label"]]
+            w.process(row)
 
-        # Wait for all queues to complete
-        for i in range(kmeans.n_clusters):
-            qs[i].join()
 
         # Clean up for output
         for i in range(kmeans.n_clusters):
