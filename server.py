@@ -218,6 +218,7 @@ class MusicHandler():
             print "track count:", track_count
             w = workers[row["_label"]]
             w.process(row)
+            track_count += 1
 
 
         # Clean up for output
