@@ -54,16 +54,16 @@ def distance(a, b):
     return abs(dist)
 
 def get_trackinfo(trackid):
-    start = time()
+    #start = time()
     ti = { 'track_id': trackid }
     myfile = os.path.join(MSD_ROOT, trackid[2], trackid[3], trackid[4], trackid + ".h5")
     f = h5py.File(myfile, 'r')
-    opent = time()
-    print "open: ", opent - start
+    #opent = time()
+    #print "open: ", opent - start
    
     (ti['mode'], ti['tempo'], ti['time_signature'], ti['loudness']) = f['analysis/songs'][0, 'mode', 'tempo', 'time_signature', 'loudness']
-    analysist = time()
-    print "analysis: ", analysist - opent
+    #analysist = time()
+    #print "analysis: ", analysist - opent
 
     # Round tempo to nearest tenths
     ti['tempo'] = int(decimal.Decimal(int(round(ti['tempo'], -1))))
@@ -71,8 +71,8 @@ def get_trackinfo(trackid):
     ti['artist_terms'] = f['metadata/artist_terms'][0:]
     ti['artist_terms_freq'] = f['metadata/artist_terms_freq'][0:]
     ti['artist_terms_weight'] = f['metadata/artist_terms_weight'][0:]
-    metadata1 = time()
-    print "metadata1: ", metadata1 - analysist
+    #metadata1 = time()
+    #print "metadata1: ", metadata1 - analysist
 
     #md = f['metadata/songs'][0]
     #i = 0
@@ -96,15 +96,15 @@ def get_trackinfo(trackid):
     ti['artist_name'] = md[9]
     ti['album_name'] = md[14]
     ti['song_name'] = md[18]
-    metadata = time()
-    print "metadata: ", metadata - metadata1
+    #metadata = time()
+    #print "metadata: ", metadata - metadata1
 
     f.close()
 
-    stop = time()
+    #stop = time()
 
-    print 'close file: ', stop - metadata1
-    print 'final: ', stop - start
+    #print 'close file: ', stop - metadata1
+    #print 'final: ', stop - start
 
     return ti
 
