@@ -206,7 +206,7 @@ class MusicHandler():
         workers = [None] * kmeans.n_clusters
         for i in range(kmeans.n_clusters):
             clusters[i] = self.init_cluster(kmeans.labels_[i], kmeans.cluster_centers_[i])
-            workers[i] = ClusterWorker(clusters[i], qs[i], df.columns, kmeans.cluster_centers_[i])
+            workers[i] = ClusterWorker(clusters[i], df.columns, kmeans.cluster_centers_[i])
 
 
         # Put labels in df
