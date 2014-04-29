@@ -19,9 +19,11 @@ MSD_ROOT="/mnt/msd/data"
 ANALYSIS_FIELDS=['danceability', 'mode', 'tempo', 'time_signature', 'loudness']
 MODE_MAP=["minor", "major"]
 TOP_COUNT=50
-N_CLUSTERS=int(sys.argv[1])
+INPUT_FILE=sys.argv[1]
+N_CLUSTERS=int(sys.argv[2])
 
-print N_CLUSTERS
+#print INPUT_FILE
+#print N_CLUSTERS
 
 # Load reverse stem mapping
 def load_reverse():
@@ -161,14 +163,11 @@ class MusicHandler():
     # Create a new version of clusters.json
     def post_clusters(self):
         # Load initial dataframe (df)
-	print "starting df load"
+        print "starting df load"
         df = pandas.io.parsers.read_csv(
-            #os.path.join(LOCAL_ROOT, "100tracks.csv")
-            os.path.join(LOCAL_ROOT, "head10ktracks.csv")
-            #os.path.join(LOCAL_ROOT, "tracks.csv")
-            #os.path.join(LOCAL_ROOT, "head100000tracks.csv")
+            os.path.join(LOCAL_ROOT, INPUT_FILE)
         )
-	print "finished df load"
+        print "finished df load"
 
         # Save track id for later use
         trackid = df['track_id']
@@ -227,10 +226,10 @@ class MusicHandler():
         clusters_by_distance = sorted(clusters, key=lambda cluster: cluster["median_distance"])
         clusters_by_num_tracks = sorted(clusters, key=lambda cluster: cluster["num_tracks"], reverse=True)
 
-        with open(os.path.join(LOCAL_ROOT, "clusters_by_distance_%d.json" % (kmeans.n_clusters)) , "w") as distance_file:
+        with open(os.path.join(LOCAL_ROOT, "clusters_by_distance_%s_%d.json" % (INPUT_FILE, N_CLUSTERS)) , "w") as distance_file:
             json.dump(clusters_by_distance, distance_file, sort_keys=True, indent=4, separators=(',', ': '))
 
-        with open(os.path.join(LOCAL_ROOT, "clusters_by_num_tracks_%s.json" % (kmeans.n_clusters)), "w") as tracks_file:
+        with open(os.path.join(LOCAL_ROOT, "clusters_by_num_tracks_%s_%d.json" % (INPUT_FILE, N_CLUSTERS)), "w") as tracks_file:
             json.dump(clusters_by_num_tracks, tracks_file, sort_keys=True, indent=4, separators=(',', ': '))
        
 
