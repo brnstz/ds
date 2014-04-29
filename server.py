@@ -8,6 +8,7 @@ import pprint
 import decimal
 import numpy
 import operator
+import json
 from time import time
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from sklearn.cluster import MiniBatchKMeans, KMeans
@@ -54,16 +55,11 @@ def distance(a, b):
     return abs(dist)
 
 def get_trackinfo(trackid):
-    #start = time()
     ti = { 'track_id': trackid }
     myfile = os.path.join(MSD_ROOT, trackid[2], trackid[3], trackid[4], trackid + ".h5")
     f = h5py.File(myfile, 'r')
-    #opent = time()
-    #print "open: ", opent - start
    
     (ti['mode'], ti['tempo'], ti['time_signature'], ti['loudness']) = f['analysis/songs'][0, 'mode', 'tempo', 'time_signature', 'loudness']
-    #analysist = time()
-    #print "analysis: ", analysist - opent
 
     # Round tempo to nearest tenths
     ti['tempo'] = int(decimal.Decimal(int(round(ti['tempo'], -1))))
@@ -71,40 +67,14 @@ def get_trackinfo(trackid):
     ti['artist_terms'] = f['metadata/artist_terms'][0:]
     ti['artist_terms_freq'] = f['metadata/artist_terms_freq'][0:]
     ti['artist_terms_weight'] = f['metadata/artist_terms_weight'][0:]
-    #metadata1 = time()
-    #print "metadata1: ", metadata1 - analysist
 
-    #md = f['metadata/songs'][0]
-    #i = 0
-    #for val in f['metadata/songs'][0]:
-    #    if i == 9:
-    #        ti['artist_name'] = val
-    #    elif i == 14:
-    #        ti['album_name'] = val
-    #    elif i == 18:
-    #        ti['song_name'] = val
-    #    elif i > 18:
-    #        break
-        
-    #    i += 1
-    # FIXME: is this slow even without extracting?    
     md = f['metadata/songs'][0]
-    #ti['artist_name'] = "Artist"
-    #ti['album_name'] = "Album"
-    #ti['song_name'] = "Song"
 
     ti['artist_name'] = md[9]
     ti['album_name'] = md[14]
     ti['song_name'] = md[18]
-    #metadata = time()
-    #print "metadata: ", metadata - metadata1
 
     f.close()
-
-    #stop = time()
-
-    #print 'close file: ', stop - metadata1
-    #print 'final: ', stop - start
 
     return ti
 
@@ -124,14 +94,19 @@ class ClusterWorker():
 
         distance_from_center = distance(self.center, words_only)
 
-        # Create a "quick" version of track without all info
+        # How to make link?
+        # https://ws.spotify.com/search/1/track.json?q=Cut+Your+Hair
+        # Create a "quick" version of track without huge terms
         quick_track = { 
             "track_id": row["_track_id"],
             "distance":  distance_from_center,
+            "artist_name": ti["artist_name"],
+            "album_name": ti["album_name"],
+            "song_name": ti["song_name"],
         }
       
         # Append track to our list
-        self.c["tracks"].append(quick_track)
+        self.c["unsorted_tracks"].append(quick_track)
 
         # Accumulate count for each word used
         for i in range(5000):
@@ -171,7 +146,7 @@ class MusicHandler():
         res = {
             "center": center,
             "label": label,
-            "tracks": [],
+            "unsorted_tracks": [],
             "word_scores": {},
             "term_scores": {},
             "mode_scores": {"major": 0, "minor": 0},
@@ -230,14 +205,27 @@ class MusicHandler():
             c = clusters[i]
             c["top_words"] =  sorted(c["word_scores"].iteritems(), key=operator.itemgetter(1), reverse=True)[:TOP_COUNT]
             c["top_terms"] =  sorted(c["term_scores"].iteritems(), key=operator.itemgetter(1), reverse=True)[:TOP_COUNT]
-            c.pop("word_scores", None)
-            c.pop("term_scores", None)
+            c.pop("word_scores")
+            c.pop("term_scores")
+
+            c["tracks"] = sorted(c["unsorted_tracks"], key=lambda track: track["distance"])
+            c.pop("unsorted_tracks")
 
             c["median_tempo"] = numpy.median(c["tempos"])
             c.pop("tempos")
-       
-        pprint.pprint(clusters)
 
+            c["median_distance"] = numpy.median(map(lambda track: track["distance"]), c["tracks"])
+            c["num_tracks"] = len(c["tracks"])
+
+        clusters_by_distance = sorted(clusters, key=lambda cluster: cluster["median_distance"])
+        clusters_by_num_tracks = sorted(clusters, key=lambda cluster: cluster["num_tracks"])
+
+        with open(os.path.join(LOCAL_ROOT, "clusters_by_distance.json", "w")) as distance_file:
+            json.dump(clusters_by_distance, distance_file)
+
+        with open(os.path.join(LOCAL_ROOT, "clusters_by_num_tracks.json", "w")) as tracks_file:
+            json.dump(clusters_by_num_tracks, tracks_file)
+       
 
 
     def do_GET(self):
