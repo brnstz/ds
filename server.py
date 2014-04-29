@@ -183,9 +183,13 @@ class MusicHandler():
     # Create a new version of clusters.json
     def post_clusters(self):
         # Load initial dataframe (df)
+	print "starting df load"
         df = pandas.io.parsers.read_csv(
             os.path.join(LOCAL_ROOT, "head1000tracks.csv")
+            #os.path.join(LOCAL_ROOT, "tracks.csv")
+            #os.path.join(LOCAL_ROOT, "head100000tracks.csv")
         )
+	print "finished df load"
 
         # Save track id for later use
         trackid = df['track_id']
