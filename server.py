@@ -161,8 +161,8 @@ class MusicHandler():
         # Load initial dataframe (df)
 	print "starting df load"
         df = pandas.io.parsers.read_csv(
-            os.path.join(LOCAL_ROOT, "100tracks.csv")
-            #os.path.join(LOCAL_ROOT, "head1000tracks.csv")
+            #os.path.join(LOCAL_ROOT, "100tracks.csv")
+            os.path.join(LOCAL_ROOT, "head1000tracks.csv")
             #os.path.join(LOCAL_ROOT, "tracks.csv")
             #os.path.join(LOCAL_ROOT, "head100000tracks.csv")
         )
@@ -179,7 +179,7 @@ class MusicHandler():
         df = df.fillna(0.0)
 
         # Run fit
-        kmeans = MiniBatchKMeans(n_clusters=1)
+        kmeans = MiniBatchKMeans(n_clusters=100)
         kmeans.fit(df)
 
         clusters = [None] * kmeans.n_clusters
@@ -225,10 +225,10 @@ class MusicHandler():
 	# This is not intuitive, so leave off
 	c.pop("center")
 
-        with open(os.path.join(LOCAL_ROOT, "clusters_by_distance.json"), "w") as distance_file:
+        with open(os.path.join(LOCAL_ROOT, "clusters_by_distance_%s.json" % (time().strftime("%Y-%m-%d"))), "w") as distance_file:
             json.dump(clusters_by_distance, distance_file)
 
-        with open(os.path.join(LOCAL_ROOT, "clusters_by_num_tracks.json"), "w") as tracks_file:
+        with open(os.path.join(LOCAL_ROOT, "clusters_by_num_tracks_%s.json" % (time().strftime("%Y-%m-%d"))), "w") as tracks_file:
             json.dump(clusters_by_num_tracks, tracks_file)
        
 
