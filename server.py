@@ -221,7 +221,10 @@ class MusicHandler():
             c["num_tracks"] = len(c["tracks"])
 
             # No longer need this field and it makes json hard to read
-            c.pop("center")	   
+            c.pop("center")	
+
+        # Remove empty clusters 
+        clusters = [c for c in clusters if c["num_tracks"] > 0]
 
         clusters_by_distance = sorted(clusters, key=lambda cluster: cluster["median_distance"])
         clusters_by_num_tracks = sorted(clusters, key=lambda cluster: cluster["num_tracks"], reverse=True)
