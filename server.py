@@ -226,10 +226,10 @@ class MusicHandler():
         clusters_by_distance = sorted(clusters, key=lambda cluster: cluster["median_distance"])
         clusters_by_num_tracks = sorted(clusters, key=lambda cluster: cluster["num_tracks"], reverse=True)
 
-        with open(os.path.join(LOCAL_ROOT, "clusters_by_distance_%s_%d.json" % (INPUT_FILE, N_CLUSTERS)) , "w") as distance_file:
+        with open(os.path.join(LOCAL_ROOT, "output/", "clusters_by_distance_%s_%d.json" % (INPUT_FILE, N_CLUSTERS)) , "w") as distance_file:
             json.dump(clusters_by_distance, distance_file, sort_keys=True, indent=4, separators=(',', ': '))
 
-        with open(os.path.join(LOCAL_ROOT, "clusters_by_num_tracks_%s_%d.json" % (INPUT_FILE, N_CLUSTERS)), "w") as tracks_file:
+        with open(os.path.join(LOCAL_ROOT, "output/", "clusters_by_num_tracks_%s_%d.json" % (INPUT_FILE, N_CLUSTERS)), "w") as tracks_file:
             json.dump(clusters_by_num_tracks, tracks_file, sort_keys=True, indent=4, separators=(',', ': '))
        
 
