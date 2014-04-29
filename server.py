@@ -144,8 +144,9 @@ class MusicHandler():
 
     def init_cluster(self, label, center):
         res = {
-            "center": map (lambda x: float(x), center),
-            "label": label,
+            #"center": map (lambda x: float(x), center),
+            "center": center,
+            "label": int(label),
             "unsorted_tracks": [],
             "word_scores": {},
             "term_scores": {},
@@ -218,8 +219,11 @@ class MusicHandler():
             c["median_distance"] = numpy.median(map(lambda track: track["distance"], c["tracks"]))
             c["num_tracks"] = len(c["tracks"])
 
-        clusters_by_distance = sorted(clusters, key=lambda cluster: cluster["median_distance"])
+        clusters_by_distance = sorted(clusters, key=lambda cluster: cluster["median_distance"], reverse=True)
         clusters_by_num_tracks = sorted(clusters, key=lambda cluster: cluster["num_tracks"])
+
+	# This is not intuitive, so leave off
+	c.pop("center")
 
         with open(os.path.join(LOCAL_ROOT, "clusters_by_distance.json"), "w") as distance_file:
             json.dump(clusters_by_distance, distance_file)
