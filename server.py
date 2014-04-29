@@ -144,7 +144,7 @@ class MusicHandler():
 
     def init_cluster(self, label, center):
         res = {
-            "center": center,
+            "center": map (lambda x: float(x), center),
             "label": label,
             "unsorted_tracks": [],
             "word_scores": {},
