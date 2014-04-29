@@ -22,8 +22,8 @@ TOP_COUNT=50
 INPUT_FILE=sys.argv[1]
 N_CLUSTERS=int(sys.argv[2])
 
-#print INPUT_FILE
-#print N_CLUSTERS
+print INPUT_FILE
+print N_CLUSTERS
 
 # Load reverse stem mapping
 def load_reverse():
