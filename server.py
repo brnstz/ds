@@ -222,8 +222,8 @@ class MusicHandler():
             # No longer need this field and it makes json hard to read
             c.pop("center")	   
 
-        clusters_by_distance = sorted(clusters, key=lambda cluster: cluster["median_distance"], reverse=True)
-        clusters_by_num_tracks = sorted(clusters, key=lambda cluster: cluster["num_tracks"])
+        clusters_by_distance = sorted(clusters, key=lambda cluster: cluster["median_distance"])
+        clusters_by_num_tracks = sorted(clusters, key=lambda cluster: cluster["num_tracks"], reverse=True)
 
         with open(os.path.join(LOCAL_ROOT, "clusters_by_distance_%d.json" % (kmeans.n_clusters)) , "w") as distance_file:
             json.dump(clusters_by_distance, distance_file)
