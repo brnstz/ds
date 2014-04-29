@@ -9,17 +9,19 @@ import decimal
 import numpy
 import operator
 import json
+import sys
 from time import time
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from sklearn.cluster import MiniBatchKMeans, KMeans
-import sys
 
 LOCAL_ROOT="/mnt/msd/AdditionalFiles"
 MSD_ROOT="/mnt/msd/data"
 ANALYSIS_FIELDS=['danceability', 'mode', 'tempo', 'time_signature', 'loudness']
 MODE_MAP=["minor", "major"]
-#SKIP_COMMON_WORD_COUNT=10
 TOP_COUNT=50
+N_CLUSTERS=int(sys.argv[1])
+
+print N_CLUSTERS
 
 # Load reverse stem mapping
 def load_reverse():
@@ -161,8 +163,8 @@ class MusicHandler():
         # Load initial dataframe (df)
 	print "starting df load"
         df = pandas.io.parsers.read_csv(
-            os.path.join(LOCAL_ROOT, "100tracks.csv")
-            #os.path.join(LOCAL_ROOT, "head1000tracks.csv")
+            #os.path.join(LOCAL_ROOT, "100tracks.csv")
+            os.path.join(LOCAL_ROOT, "head10ktracks.csv")
             #os.path.join(LOCAL_ROOT, "tracks.csv")
             #os.path.join(LOCAL_ROOT, "head100000tracks.csv")
         )
@@ -179,7 +181,7 @@ class MusicHandler():
         df = df.fillna(0.0)
 
         # Run fit
-        kmeans = MiniBatchKMeans(n_clusters=10)
+        kmeans = MiniBatchKMeans(n_clusters=N_CLUSTERS)
         kmeans.fit(df)
 
         clusters = [None] * kmeans.n_clusters
@@ -226,10 +228,10 @@ class MusicHandler():
         clusters_by_num_tracks = sorted(clusters, key=lambda cluster: cluster["num_tracks"], reverse=True)
 
         with open(os.path.join(LOCAL_ROOT, "clusters_by_distance_%d.json" % (kmeans.n_clusters)) , "w") as distance_file:
-            json.dump(clusters_by_distance, distance_file)
+            json.dump(clusters_by_distance, distance_file, sort_keys=True, indent=4, separators=(',', ': '))
 
         with open(os.path.join(LOCAL_ROOT, "clusters_by_num_tracks_%s.json" % (kmeans.n_clusters)), "w") as tracks_file:
-            json.dump(clusters_by_num_tracks, tracks_file)
+            json.dump(clusters_by_num_tracks, tracks_file, sort_keys=True, indent=4, separators=(',', ': '))
        
 
 
