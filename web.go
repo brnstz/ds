@@ -66,17 +66,17 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
 	{{ range $ }}
 		<li>Cluster {{ .Label }}</li>
 			<ul>
-				<li>Median Distance: {{ .MedianDistance }}</li>
+				<li>Median Distance from Center: {{ .MedianDistance }}</li>
 				<li>Median Tempo: {{ .MedianTempo }}</li>
                 <li>Major Key: {{ .ModeScores.Major }}</li>
                 <li>Minor Key: {{ .ModeScores.Minor }}</li>
                 <li>Track Count: {{ .NumTracks }}</li>
-                <li class="terms{{ .Label }}">Terms: {{ .TopTerms }}</li>
+                <li>Terms: {{ .TopTerms }}</li>
                 <li>Words: {{ .TopWords }}</li>
-                <li>Tracks:</li>
+                <li>Closest 50 Tracks to Center:</li>
                 <ul>
                     {{ range .Tracks }}
-                    <li>{{ .ArtistName }}: {{ .SongName}}</li>
+                    <li>{{ .ArtistName }}: {{ .SongName}} ( {{.Distance}} )</li>
                     {{ end }}
                 </ul>
 			</ul>
@@ -119,6 +119,10 @@ func main() {
 		if err != nil {
 			fmt.Fprint(w, err)
 			return
+		}
+
+		for i, _ := range c {
+			c[i].Tracks = c[i].Tracks[0:50]
 		}
 
 		w.Header().Add("Content-Type", htmlCt)
