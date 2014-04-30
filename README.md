@@ -46,7 +46,7 @@ natural language algorithms such as LDA (Latent Dirichlet allocation).
 
 To focus on creating a non-traditional recommendation service, I decided to use
 only the lyric data as independent variables, with common English stop words
-removed. . The additional data from the MSD helped me retrieve the actual songs
+removed. The additional data from the MSD helped me retrieve the actual songs
 to evaluate the clusters. 
 
 ### Obtaining and Transforming the Dataset ###
