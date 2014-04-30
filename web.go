@@ -81,8 +81,6 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
                         data[i] = parseInt(splitElms[1]);
                         columns[i] = splitElms[0];
                     }
-                    console.log(columns.length);
-                    console.log(data.length);
 
                     myNewChart.Bar({"labels": columns, "datasets": [{"data": data}]});
                 });
@@ -103,8 +101,6 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
         }
     </style>
     <body>
-
-    <canvas id="myChart" width="400" height="400"></canvas>
 
 	<ul>
 	{{ range $ }}
@@ -135,8 +131,12 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
 
 func convertWordCount(topWords [][]interface{}) string {
 	wordPairs := []string{}
-	for _, v := range topWords {
+	for i, v := range topWords {
 		wordPairs = append(wordPairs, fmt.Sprintf("%v<SEP1>%v", v[0], v[1]))
+
+		if i > 20 {
+			break
+		}
 	}
 
 	return strings.Join(wordPairs, "<SEP2>")
