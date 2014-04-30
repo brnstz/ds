@@ -124,4 +124,3 @@ improve its recommendations.
 * Cluster 23: Romantic, feel. Liz Phair and Boyz II Men.
 * Cluster 30: Upbeat poppy love songs.
 * Cluster 32: Hip-hop.
-* Cluster 35
