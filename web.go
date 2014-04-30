@@ -81,8 +81,8 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
                         data[i] = splitElms[1];
                         columns[i] = splitElms[0];
                     }
-                    console.log(columns);
-                    console.log(data);
+                    console.log(columns.length);
+                    console.log(data.length);
 
                     myNewChart.Bar({"labels": columns, "datasets": [{"data": data}]});
                 });
