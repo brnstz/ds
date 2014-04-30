@@ -146,8 +146,10 @@ func convertWordCount(topWords [][]interface{}) string {
 
 func main() {
 
-	http.HandleFunc("/cluster", func(w http.ResponseWriter, r *http.Request) {
-		f := filepath.Join(rootDir, fmt.Sprintf("clusters_by_distance_%v.json", r.FormValue("file")))
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		filename := "clusters_by_num_tracks_100ktracks.csv_500.json"
+		//f := filepath.Join(rootDir, fmt.Sprintf("clusters_by_distance_%v.json", r.FormValue("file")))
+		f := filepath.Join(rootDir, filename)
 		b, err := ioutil.ReadFile(f)
 
 		if err != nil {
