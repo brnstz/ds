@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"path/filepath"
+	"strings"
 )
 
 var rootDir = "/home/bseitz/proj/music"
@@ -32,10 +33,11 @@ type cluster struct {
 		Major int `json:"major"`
 		Minor int `json:"minor"`
 	} `json:"mode_scores"`
-	NumTracks int             `json:"num_tracks"`
-	TopTerms  [][]interface{} `json:"top_terms"`
-	TopWords  [][]interface{} `json:"top_words"`
-	Tracks    []struct {
+	NumTracks       int             `json:"num_tracks"`
+	TopTerms        [][]interface{} `json:"top_terms"`
+	TopWords        [][]interface{} `json:"top_words"`
+	WordCountString string
+	Tracks          []struct {
 		AlbumName  string  `json:"album_name"`
 		ArtistName string  `json:"artist_name"`
 		Distance   float32 `json:"distance"`
@@ -64,7 +66,23 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
             }
 
             jQuery(document).ready(function() {
-                console.log("I am ready");
+
+                jQuery("canvas.clusterwords").each(function(index) {
+                    var ctx = $(this).getContext("2d");
+                    var myNewChart = new Chart(ctx);
+                    var wordList = $(this).next("div.wordlist").text();
+                    var splitWords = wordList.split(",");
+                    var data = [];
+                    var columns = [];
+
+                    for (var i = 0; i < splitWords.length; i++) {
+                        var splitElms = splitWords[i].split("|");
+                        data[i] = splitElms[1];
+                        columns[i] = splitElms[0];
+                    }
+
+                    myNewChart.Bar({"labels": columns, "datasets": [{"data": data}]});
+                });
 
                 // Get context with jQuery - using jQuery's .get() method.
                 var ctx = jQuery("#myChart").get(0).getContext("2d");
@@ -109,6 +127,7 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
                 <li>Track Count: {{ .NumTracks }}</li>
                 <li>Terms: {{ .TopTerms }}</li>
                 <li>Words: {{ .TopWords }}</li>
+                <li><canvas class="clusterwords" width="100%" height="200"></canvas><div class="wordlist">{{ .WordCountString}}</div></li>
                 <li>Closest 50 Tracks to Center:</li>
                 <ul>
                     {{ range .Tracks }}
@@ -124,11 +143,18 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
 	</body>
 </html>`))
 
+func convertWordCount(topWords [][]interface{}) string {
+	wordPairs = []string{}
+	for i, v := range topWords {
+		wordPairs = append(wordPairs, fmt.Sprintf("%v|%v", v[0], v[1]))
+	}
+
+	return strings.Join(wordPairs, ",")
+}
+
 func main() {
 
 	http.HandleFunc("/cluster", func(w http.ResponseWriter, r *http.Request) {
-		//"100ktracks.csv_500"
-
 		f := filepath.Join(rootDir, fmt.Sprintf("clusters_by_distance_%v.json", r.FormValue("file")))
 		b, err := ioutil.ReadFile(f)
 
@@ -150,6 +176,7 @@ func main() {
 				c[i].Tracks = c[i].Tracks[0:50]
 			}
 			c[i].Id = i
+			c[i].WordCountString = convertWordCount(c[i].TopWords)
 		}
 
 		w.Header().Add("Content-Type", htmlCt)
