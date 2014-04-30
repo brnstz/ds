@@ -78,7 +78,7 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
 
                     for (var i = 0; i < splitWords.length; i++) {
                         var splitElms = splitWords[i].split("<SEP1>");
-                        data[i] = splitElms[1];
+                        data[i] = parseInt(splitElms[1]);
                         columns[i] = splitElms[0];
                     }
                     console.log(columns.length);
