@@ -73,8 +73,8 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
                 var myNewChart = new Chart(ctx);
                 
                 var myData = {
-                    "labels": ["word1", "word2", "word3", "word4"];
-                    "datasets": [{"data": 30, 100, 50, 300}];
+                    "labels": ["word1", "word2", "word3", "word4"],
+                    "datasets": [{"data": 30, 100, 50, 300}]
                 };
 
                 myNewChart.Bar(myData);
