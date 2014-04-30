@@ -38,7 +38,14 @@ type cluster struct {
 var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
     <head>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-        <script src="http://d3js.org/d3.v3.min.js"></script>
+
+        <script>
+            function listenTo(artist, song, track) {
+                console.log(artist);
+                console.log(song);
+                console.log(track);
+            }
+        </script>
     </head>
 
     <style>
@@ -63,26 +70,34 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
 				<li>Median Tempo: {{ .MedianTempo }}</li>
                 <li>Major Key: {{ .ModeScores.Major }}</li>
                 <li>Minor Key: {{ .ModeScores.Minor }}</li>
-                <li>Tracks: {{ .NumTracks }}</li>
+                <li>Track Count: {{ .NumTracks }}</li>
                 <li class="terms{{ .Label }}">Terms: {{ .TopTerms }}</li>
                 <li>Words: {{ .TopWords }}</li>
-
+                <li>Tracks:</li>
+                <ul>
+                    {{ range .Tracks }}
+                    <li>{{ .ArtistName }}: {{ .SongName}} <a href="javascript:listenTo("{{ .ArtistName }}", "{{ .SongName }}", "{{ .TrackId}}"); return false;">Listen!</a></li>
+                    {{ end }}
+                </ul>
 			</ul>
-            <script type="javascript">
-                var svg = d3.select("terms{{ .Label}}").append("svg")
-                    .attr("width", 500)
-                    .attr("width", 500)
-                    .attr("class", "bubble");
-                {{ range .TopTerms }}
-                    svg.append("title").text("{{ .0 }} {{ .1}}");
-                {{ end }}
-            </script>
-
 	{{ end }}
 	</ul>
 
 	</body>
 </html>`))
+
+/*
+Maybe try this later:
+    <script type="javascript">
+        var svg = d3.select("terms{{ .Label}}").append("svg")
+            .attr("width", 500)
+            .attr("width", 500)
+            .attr("class", "bubble");
+        {{ range .TopTerms }}
+            svg.append("title").text("{{ .0 }} {{ .1}}");
+        {{ end }}
+    </script>
+*/
 
 func main() {
 
