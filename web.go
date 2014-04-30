@@ -157,11 +157,11 @@ func main() {
 
 	http.HandleFunc("/listen", func(w http.ResponseWriter, r *http.Request) {
 		// Get artist and song from our page
-		artist := f.FormValue("artist")
-		song := f.FormValue("song")
+		artist := r.FormValue("artist")
+		song := r.FormValue("song")
 
 		// Create spotify url
-		u := url.Parse(spotifyUrl)
+		u, _ := url.Parse(spotifyUrl)
 		q := u.Query()
 		q.Set("q", fmt.Sprintf("%v %v", artist, song))
 		u.RawQuery = q.Encode()
@@ -184,7 +184,7 @@ func main() {
 		}
 
 		var sr spotifyResp
-		err = json.Unmarshal(b, spotifyResp)
+		err = json.Unmarshal(b, &sr)
 
 		// Can't decode json
 		if err != nil {
@@ -197,7 +197,7 @@ func main() {
 			return
 		}
 
-		fmt.Fprintf(`<iframe src="https://embed.spotify.com/?uri=%v" frameborder="0" allowtransparency="true"></iframe>`, sr.Tracks[0].Href)
+		fmt.Fprintf(w, `<iframe src="https://embed.spotify.com/?uri=%v" frameborder="0" allowtransparency="true"></iframe>`, sr.Tracks[0].Href)
 
 	})
 
