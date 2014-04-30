@@ -92,7 +92,7 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
                 <ul>
                     {{ range .Tracks }}
                     <li>{{ .ArtistName }}: {{ .SongName}} ( {{.Distance}} )
-                        <a href="javascript:listenTo('{{ .ArtistName }}', '{{ .SongName }}', '{{ .TrackId}}');>Listen!</a> <div id="musicbox{{ .TrackId}}"></div>
+                        <a href="javascript:listenTo('{{ .ArtistName }}', '{{ .SongName }}', '{{ .TrackId}}');">Listen!</a> <div id="musicbox{{ .TrackId}}"></div>
                     </li>
                     {{ end }}
                 </ul>
