@@ -144,7 +144,7 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
 </html>`))
 
 func convertWordCount(topWords [][]interface{}) string {
-	wordPairs = []string{}
+	wordPairs := []string{}
 	for i, v := range topWords {
 		wordPairs = append(wordPairs, fmt.Sprintf("%v|%v", v[0], v[1]))
 	}
