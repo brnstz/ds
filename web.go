@@ -68,7 +68,7 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
             jQuery(document).ready(function() {
 
                 jQuery("canvas.clusterwords").each(function(index) {
-                    var ctx = $(this).getContext("2d");
+                    var ctx = this.getContext("2d");
                     var myNewChart = new Chart(ctx);
                     var wordList = $(this).next("div.wordlist").text();
                     var splitWords = wordList.split(",");
