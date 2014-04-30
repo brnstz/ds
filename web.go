@@ -122,7 +122,9 @@ func main() {
 		}
 
 		for i, _ := range c {
-			c[i].Tracks = c[i].Tracks[0:50]
+			if len(c[i].Tracks) > 50 {
+				c[i].Tracks = c[i].Tracks[0:50]
+			}
 		}
 
 		w.Header().Add("Content-Type", htmlCt)
