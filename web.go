@@ -38,6 +38,7 @@ type cluster struct {
 var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
     <head>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script src="http://d3js.org/d3.v3.min.js"></script>
     </head>
 
     <style>
@@ -57,17 +58,26 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
 	<ul>
 	{{ range $ }}
 		<li>Cluster {{ .Label }}</li>
-		<li>
 			<ul>
 				<li>Median Distance: {{ .MedianDistance }}</li>
 				<li>Median Tempo: {{ .MedianTempo }}</li>
                 <li>Major Key: {{ .ModeScores.Major }}</li>
                 <li>Minor Key: {{ .ModeScores.Minor }}</li>
                 <li>Tracks: {{ .NumTracks }}</li>
-                <li>Terms: {{ .TopTerms }}</li>
+                <li class="terms{{ .Label }}">Terms: {{ .TopTerms }}</li>
                 <li>Words: {{ .TopWords }}</li>
+
 			</ul>
-		</li>
+            <script type="javascript">
+                var svg = d3.select("terms{{ .Label}}").append("svg")
+                    .attr("width", 500)
+                    .attr("width", 500)
+                    .attr("class", "bubble");
+                {{ range .TopTerms }}
+                    svg.append("title").text("{{ .0 }} {{ .1}}");
+                {{ end }}
+            </script>
+
 	{{ end }}
 	</ul>
 
