@@ -72,12 +72,12 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
                     var ctx = this.getContext("2d");
                     var myNewChart = new Chart(ctx);
                     var wordList = $(this).next("div.wordlist").text();
-                    var splitWords = wordList.split(",");
+                    var splitWords = wordList.split("<SEP2>");
                     var data = [];
                     var columns = [];
 
                     for (var i = 0; i < splitWords.length; i++) {
-                        var splitElms = splitWords[i].split("|");
+                        var splitElms = splitWords[i].split("<SEP1>");
                         data[i] = splitElms[1];
                         columns[i] = splitElms[0];
                     }
@@ -134,10 +134,10 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
 func convertWordCount(topWords [][]interface{}) string {
 	wordPairs := []string{}
 	for _, v := range topWords {
-		wordPairs = append(wordPairs, fmt.Sprintf("%v|%v", v[0], v[1]))
+		wordPairs = append(wordPairs, fmt.Sprintf("%v<SEP1>%v", v[0], v[1]))
 	}
 
-	return strings.Join(wordPairs, ",")
+	return strings.Join(wordPairs, "<SEP2>")
 }
 
 func main() {
