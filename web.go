@@ -1,5 +1,7 @@
 package main
 
+// web server to pre-processed clustered music data
+
 import (
 	"encoding/json"
 	"fmt"
