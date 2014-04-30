@@ -87,7 +87,7 @@ my UI. More on this in the next section.
 
 ### Business application / Implementation plan ###
 
-A production implementatio would follow the same basic structure that we have, except it would be
+A production implementation would follow the same basic structure that we have, except it would be
 distributed and have user feedback.
 
 The backend processing would be a scaled and distributed version of a clustering algorithm.
