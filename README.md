@@ -112,7 +112,7 @@ improve its recommendations.
 ### Interesting clusters ###
 * Cluster 0: Very similar, low repeat of words.
 * Cluster 1: Spanish songs, "come" is the resolved stemmed version of "como".
-* Cluster 3: Love is overtaken by know/never/one. Mostly heavy metal songs. Obscure words, very little repitition.
+* Cluster 3: Love is overtaken by know/never/one. Mostly heavy metal songs. Obscure words, very little repetition.
 * Cluster 5: Sad love songs, ponderous. More "know" than "love". Good examples: Placebo, Rufus.
 * Cluster 9: Break up songs, resentful.
 * Cluster 11: One, never, go, out. World-weary conspiracy songs. First 4...
