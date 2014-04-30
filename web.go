@@ -49,18 +49,13 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
 
         <script>
             function listenTo(artist, song, track) {
-                /*
-                console.log(artist);
-                console.log(song);
-                console.log(track);
-                */
                 var req = {
                     "artist": artist,
                     "song": song
                 };
 
-                $.get("/listen?" + $.param(req), null, function(data) {
-                    $("div#musicbox" + track).html(data);
+                jQuery.get("/listen?" + jQuery.param(req), null, function(data) {
+                    jQuery("div#musicbox" + track).html(data);
                 }, "html");
 
                 return false;
