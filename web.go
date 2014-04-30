@@ -76,7 +76,9 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
                 <li>Closest 50 Tracks to Center:</li>
                 <ul>
                     {{ range .Tracks }}
-                    <li>{{ .ArtistName }}: {{ .SongName}} ( {{.Distance}} )</li>
+                    <li>{{ .ArtistName }}: {{ .SongName}} ( {{.Distance}} )
+                        <a href="javascript:listenTo('{{ .ArtistName }}', '{{ .SongName }}', '{{ .TrackId}}'); return false;">Listen!</a>
+                    </li>
                     {{ end }}
                 </ul>
 			</ul>
