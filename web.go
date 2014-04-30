@@ -59,8 +59,13 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
 		<li>Cluster {{ .Label }}</li>
 		<li>
 			<ul>
-				<li>Median Distance: {{ .MedianDistance }}
-				<li>Median Tempo: {{ .MedianDistance }}
+				<li>Median Distance: {{ .MedianDistance }}</li>
+				<li>Median Tempo: {{ .MedianTempo }}</li>
+                <li>Major Key: {{ .ModeScores.Major }}</li>
+                <li>Minor Key: {{ .ModeScores.Minor }}</li>
+                <li>Tracks: {{ .NumTracks }}</li>
+                <li>Terms: {{ .TopTerms }}</li>
+                <li>Words: {{ .TopWords }}</li>
 			</ul>
 		</li>
 	{{ end }}
