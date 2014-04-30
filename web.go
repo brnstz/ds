@@ -127,7 +127,7 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
                 <li>Track Count: {{ .NumTracks }}</li>
                 <li>Terms: {{ .TopTerms }}</li>
                 <li>Words: {{ .TopWords }}</li>
-                <li><canvas class="clusterwords" width="100%" height="200"></canvas><div class="wordlist">{{ .WordCountString}}</div></li>
+                <li><canvas class="clusterwords" width="500" height="200"></canvas><div class="wordlist">{{ .WordCountString}}</div></li>
                 <li>Closest 50 Tracks to Center:</li>
                 <ul>
                     {{ range .Tracks }}
