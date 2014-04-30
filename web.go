@@ -76,7 +76,7 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
                 <li>Tracks:</li>
                 <ul>
                     {{ range .Tracks }}
-                    <li>{{ .ArtistName }}: {{ .SongName}} <a href="javascript:listenTo("{{ .ArtistName }}", "{{ .SongName }}", "{{ .TrackId}}"); return false;">Listen!</a></li>
+                    <li>{{ .ArtistName }}: {{ .SongName}}</li>
                     {{ end }}
                 </ul>
 			</ul>
@@ -88,6 +88,8 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
 
 /*
 Maybe try this later:
+                    <li>{{ .ArtistName }}: {{ .SongName}} <a href="javascript:listenTo("{{ .ArtistName }}", "{{ .SongName }}", "{{ .TrackId}}"); return false;">Listen!</a></li>
+
     <script type="javascript">
         var svg = d3.select("terms{{ .Label}}").append("svg")
             .attr("width", 500)
