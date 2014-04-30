@@ -24,7 +24,8 @@ type spotifyResp struct {
 }
 
 type cluster struct {
-	Label          int     `json:"label"`
+	Label          int `json:"label"`
+	Id             int
 	MedianDistance float32 `json:"median_distance"`
 	MedianTempo    float32 `json:"median_tempo"`
 	ModeScores     struct {
@@ -46,6 +47,7 @@ type cluster struct {
 var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
     <head>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/Chart.js/0.2.0/Chart.js"></script>
 
         <script>
             function listenTo(artist, song, track) {
@@ -60,6 +62,23 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
 
                 return false;
             }
+
+            jQuery(document).ready(function() {
+                console.log("I am ready");
+
+                // Get context with jQuery - using jQuery's .get() method.
+                var ctx = jQuery("#myChart").get(0).getContext("2d");
+
+                // This will get the first returned node in the jQuery collection.
+                var myNewChart = new Chart(ctx);
+                
+                var myData = {
+                    "labels": ["word1", "word2", "word3", "word4"];
+                    "datasets": [{"data": 30, 100, 50, 300}];
+                };
+
+                myNewChart.Bar(myData);
+            });
         </script>
     </head>
 
@@ -77,9 +96,11 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
     </style>
     <body>
 
+    <canvas id="myChart" width="400" height="400"></canvas>
+
 	<ul>
 	{{ range $ }}
-		<li>Cluster {{ .Label }}</li>
+		<li>Cluster {{ .Id }}</li>
 			<ul>
 				<li>Median Distance from Center: {{ .MedianDistance }}</li>
 				<li>Median Tempo: {{ .MedianTempo }}</li>
@@ -102,21 +123,6 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
 
 	</body>
 </html>`))
-
-/*
-Maybe try this later:
-                    <li>{{ .ArtistName }}: {{ .SongName}} <a href="javascript:listenTo("{{ .ArtistName }}", "{{ .SongName }}", "{{ .TrackId}}"); return false;">Listen!</a></li>
-
-    <script type="javascript">
-        var svg = d3.select("terms{{ .Label}}").append("svg")
-            .attr("width", 500)
-            .attr("width", 500)
-            .attr("class", "bubble");
-        {{ range .TopTerms }}
-            svg.append("title").text("{{ .0 }} {{ .1}}");
-        {{ end }}
-    </script>
-*/
 
 func main() {
 
@@ -143,6 +149,7 @@ func main() {
 			if len(c[i].Tracks) > 50 {
 				c[i].Tracks = c[i].Tracks[0:50]
 			}
+			c[i].Id = i
 		}
 
 		w.Header().Add("Content-Type", htmlCt)
