@@ -11,8 +11,7 @@ import operator
 import json
 import sys
 from time import time
-from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-from sklearn.cluster import MiniBatchKMeans, KMeans
+from sklearn.cluster import MiniBatchKMeans
 
 LOCAL_ROOT="/mnt/msd/AdditionalFiles"
 MSD_ROOT="/mnt/msd/data"
@@ -138,14 +137,7 @@ class ClusterWorker():
 
         
 
-#class MusicHandler(BaseHTTPRequestHandler):
 class MusicHandler():
-    def get_clusters():
-        pass
-
-    def get_track():
-        pass
-
     def init_cluster(self, label, center):
         res = {
             #"center": map (lambda x: float(x), center),
@@ -161,7 +153,7 @@ class MusicHandler():
         return res
 
     # Create a new version of clusters.json
-    def post_clusters(self):
+    def run_clusters(self):
         # Load initial dataframe (df)
         print "starting df load"
         df = pandas.io.parsers.read_csv(
@@ -236,20 +228,5 @@ class MusicHandler():
             json.dump(clusters_by_num_tracks, tracks_file, sort_keys=True, indent=4, separators=(',', ': '))
        
 
-
-    def do_GET(self):
-        if self.path == '/clusters.json':
-            self.get_clusters()
-
-        elif self.path.endswith('track.json'):
-            self.get_track()
-
-    def do_POST(self):
-        if self.path == '/clusters.json':
-            self.post_clusters()
-
-
-#server = HTTPServer(('', 8080), MusicHandler)
-#server.serve_forever()
 handler = MusicHandler()
-handler.post_clusters()
+handler.run_clusters()
