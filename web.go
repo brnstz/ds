@@ -166,7 +166,7 @@ func main() {
 		q.Set("q", fmt.Sprintf("%v %v", artist, song))
 		u.RawQuery = q.Encode()
 
-		resp, err := http.Get(u)
+		resp, err := http.Get(u.String())
 
 		// Can't run http get
 		if err != nil {
