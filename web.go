@@ -66,6 +66,7 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
             }
 
             jQuery(document).ready(function() {
+                jQuery("div.wordlist").hide();
 
                 jQuery("canvas.clusterwords").each(function(index) {
                     var ctx = this.getContext("2d");
@@ -83,19 +84,6 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
 
                     myNewChart.Bar({"labels": columns, "datasets": [{"data": data}]});
                 });
-
-                // Get context with jQuery - using jQuery's .get() method.
-                var ctx = jQuery("#myChart").get(0).getContext("2d");
-
-                // This will get the first returned node in the jQuery collection.
-                var myNewChart = new Chart(ctx);
-                
-                var myData = {
-                    "labels": ["word1", "word2", "word3", "word4"],
-                    "datasets": [{"data": [30, 100, 50, 300]}]
-                };
-
-                myNewChart.Bar(myData);
             });
         </script>
     </head>
@@ -127,7 +115,7 @@ var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
                 <li>Track Count: {{ .NumTracks }}</li>
                 <li>Terms: {{ .TopTerms }}</li>
                 <li>Words: {{ .TopWords }}</li>
-                <li><canvas class="clusterwords" width="500" height="200"></canvas><div class="wordlist">{{ .WordCountString}}</div></li>
+                <li><canvas class="clusterwords" width="1000" height="300"></canvas><div class="wordlist">{{ .WordCountString}}</div></li>
                 <li>Closest 50 Tracks to Center:</li>
                 <ul>
                     {{ range .Tracks }}
