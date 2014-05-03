@@ -110,7 +110,8 @@ This lyrical approach could be an asset to any music service that wants to
 improve its recommendations.
 
 ### Interesting clusters ###
-||Cluster Number||Key words||Evaluation||
+|Cluster Number|Key words|Evaluation|
+|--------------|---------|----------|
 |0|"love" "know"|Songs with few repeat words, no chorus, only verse. Songs are clustered by having short vectors.|
 |1|"come" (actually Spanish como) "oh"|Spanish songs.|
 |3|"know" "never" "one" "love"|First English cluster without "love" as top word. Mostly heavy metal songs with obscure words and little repetition. Clustered again by their short vectors.|
