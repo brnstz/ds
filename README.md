@@ -114,8 +114,8 @@ improve its recommendations.
 |--------------|---------|----------|
 |0|"love" "know"|Songs with few repeat words, no chorus, only verse. Songs are clustered by having short vectors.|
 |1|"come" (actually Spanish como) "oh"|Spanish songs.|
-|3|"know" "never" "one" "love"|First English cluster without "love" as top word. Mostly heavy metal songs with obscure words and little repetition. Clustered again by their short vectors.|
-|5|"know" "one" "love" "never"|Sad lost love songs that are ponderous and not particularly resentful.|
+|3|"know" "never"|Mostly heavy metal songs with obscure words and little repetition. Clustered again by their short vectors.|
+|5|"know" "one" "love"|Sad lost love songs that are ponderous and not particularly resentful.|
 |9|"know" "love" "up" "out" "away"|Break up songs, resentful and/or self-empowered.|
 |11|"one" "never" "know" "go" "out"|Worldly / weary / conspiracy songs. Not about love.|
 |12|"go"|Break up songs, pushing away for greater good.|
