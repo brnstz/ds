@@ -110,17 +110,18 @@ This lyrical approach could be an asset to any music service that wants to
 improve its recommendations.
 
 ### Interesting clusters ###
-* Cluster 0: Very similar, low repeat of words.
-* Cluster 1: Spanish songs, "come" is the resolved stemmed version of "como".
-* Cluster 3: Love is overtaken by know/never/one. Mostly heavy metal songs. Obscure words, very little repetition.
-* Cluster 5: Sad love songs, ponderous. More "know" than "love". Good examples: Placebo, Rufus.
-* Cluster 9: Break up songs, resentful.
-* Cluster 11: One, never, go, out. World-weary conspiracy songs. First 4...
-* Cluster 12: Break up songs, moving on. "go"
-* Cluster 13: Desire songs. Up and want.
-* Cluster 16: Desire songs, needful.
-* Cluster 19: German
-* Cluster 22: Italian
-* Cluster 23: Romantic, feel. Liz Phair and Boyz II Men.
-* Cluster 30: Upbeat poppy love songs.
-* Cluster 32: Hip-hop.
+||Cluster Number||Key words||Evaluation||
+|0|"love" "know"|Songs with few repeat words, no chorus, only verse. Songs are clustered by having short vectors.|
+|1|"come" (actually Spanish como) "oh"|Spanish songs.|
+|3|"know" "never" "one" "love"|First English cluster without "love" as top word. Mostly heavy metal songs with obscure words and little repetition. Clustered again by their short vectors.|
+|5|"know" "one" "love" "never"|Sad lost love songs that are ponderous and not particularly resentful.|
+|9|"know" "love" "up" "out" "away"|Break up songs, resentful and/or self-empowered.|
+|11|"one" "never" "know" "go" "out"|Worldly / weary / conspiracy songs. Not about love.|
+|12|"go"|Break up songs, pushing away for greater good.|
+|13|"love" "up" "want"|Desire songs, romantic.|
+|16|"need" "know" "love"|Desire songs, more star-crossed and needful than cluster 13.|
+|19|n/a|German|
+|22|n/a|Italian|
+|23|"feel" "love" "down"|Sappy love songs, apologetic.|
+|30|"love" "up" "want" "night"|Upbeat poppy love songs.|
+|32|"down" "go"|Hip-hop|
