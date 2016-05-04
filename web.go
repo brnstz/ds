@@ -50,8 +50,8 @@ type cluster struct {
 
 var clusterHtml = template.Must(template.New("clusterHtml").Parse(`<html>
     <head>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-        <script src="http://cdnjs.cloudflare.com/ajax/libs/Chart.js/0.2.0/Chart.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/0.2.0/Chart.js"></script>
 
         <script>
             function listenTo(artist, song, track) {
